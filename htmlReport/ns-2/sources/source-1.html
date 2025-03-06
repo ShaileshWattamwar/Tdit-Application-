@@ -1,0 +1,266 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProductController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ElasticSearch.SearchService.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: ProductController (com.ElasticSearch.SearchService.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProductController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ElasticSearch.SearchService.controller;
+&nbsp;
+&nbsp;import co.elastic.clients.elasticsearch.core.SearchResponse;
+&nbsp;import co.elastic.clients.elasticsearch.core.search.Hit;
+&nbsp;import com.ElasticSearch.SearchService.entity.Product;
+&nbsp;import com.ElasticSearch.SearchService.service.ElasticSearchService;
+&nbsp;import com.ElasticSearch.SearchService.service.ProductService;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/apis&quot;)
+<b class="nc">&nbsp;public class ProductController {</b>
+<b class="nc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);</b>
+&nbsp;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProductService productService;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ElasticSearchService elasticSearchService;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/findAll&quot;)
+&nbsp;    Iterable&lt;Product&gt; findAll(){
+<b class="nc">&nbsp;        logger.info(&quot;Fetching all products from database&quot;);</b>
+<b class="nc">&nbsp;        return productService.getProducts();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/insert&quot;)
+&nbsp;    public Product insertProduct(@RequestBody Product product){
+<b class="nc">&nbsp;        logger.info(&quot;Inserting new product: {}&quot;, product);</b>
+<b class="nc">&nbsp;        return productService.insertProduct(product);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/matchAll&quot;)
+&nbsp;    public String matchAll() throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Executing matchAll search&quot;);</b>
+<b class="nc">&nbsp;        SearchResponse&lt;Map&gt; searchResponse =  elasticSearchService.matchAllServices();</b>
+<b class="nc">&nbsp;        logger.info(&quot;MatchAll Search Results: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return searchResponse.hits().hits().toString();</b>
+&nbsp;    }
+&nbsp;    //matchAllProducts video content
+&nbsp;    @GetMapping(&quot;/matchAllProducts&quot;)
+&nbsp;    public List&lt;Product&gt; matchAllProducts() throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Executing matchAllProducts search&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse =  elasticSearchService.matchAllProductsServices();</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Hit&lt;Product&gt;&gt; listOfHits= searchResponse.hits().hits();</b>
+<b class="nc">&nbsp;        List&lt;Product&gt; listOfProducts  = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for(Hit&lt;Product&gt; hit : listOfHits){</b>
+<b class="nc">&nbsp;            listOfProducts.add(hit.source());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        logger.info(&quot;Total Products found: {}&quot;, listOfProducts.size());</b>
+&nbsp;
+<b class="nc">&nbsp;        return listOfProducts;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/matchAllProducts/{fieldValue}&quot;)
+&nbsp;    public List&lt;Product&gt; matchAllProductsWithName(@PathVariable String fieldValue) throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Executing matchAllProductsWithName search for: {}&quot;, fieldValue);</b>
+&nbsp;
+<b class="nc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse =  elasticSearchService.matchProductsWithName(fieldValue);</b>
+<b class="nc">&nbsp;        System.out.println(searchResponse.hits().hits().toString());</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Hit&lt;Product&gt;&gt; listOfHits= searchResponse.hits().hits();</b>
+<b class="nc">&nbsp;        List&lt;Product&gt; listOfProducts  = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for(Hit&lt;Product&gt; hit : listOfHits){</b>
+<b class="nc">&nbsp;            listOfProducts.add(hit.source());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        logger.info(&quot;Total Products found: {}&quot;, listOfProducts.size());</b>
+&nbsp;
+<b class="nc">&nbsp;        return listOfProducts;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/autoSuggest/{partialProductName}&quot;)
+&nbsp;    public List&lt;String&gt; autoSuggestProductSearch(@PathVariable String partialProductName) throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Executing autoSuggest search for: {}&quot;, partialProductName);</b>
+&nbsp;
+&nbsp;        // Call the service method to fetch the auto-suggested products
+<b class="nc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticSearchService.autoSuggestProduct(partialProductName);</b>
+&nbsp;
+&nbsp;        // Extract product names from the search hits
+<b class="nc">&nbsp;        List&lt;Hit&lt;Product&gt;&gt; hitList = searchResponse.hits().hits();</b>
+<b class="nc">&nbsp;        List&lt;Product&gt; productList = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Hit&lt;Product&gt; hit : hitList) {</b>
+<b class="nc">&nbsp;            productList.add(hit.source());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Extract the names of the products
+<b class="nc">&nbsp;        List&lt;String&gt; listOfProductNames = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Product product : productList) {</b>
+<b class="nc">&nbsp;            listOfProductNames.add(product.getName());</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        logger.info(&quot;Auto-Suggest Results: {}&quot;, listOfProductNames);</b>
+&nbsp;
+<b class="nc">&nbsp;        return listOfProductNames;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/fuzzySearch/{fieldValue}&quot;)
+&nbsp;    public List&lt;Product&gt; fuzzySearchProducts(@PathVariable String fieldValue) throws IOException {
+<b class="nc">&nbsp;        logger.info(&quot;Executing fuzzySearch for: {}&quot;, fieldValue);</b>
+&nbsp;
+<b class="nc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticSearchService.fuzzySearchProducts(fieldValue);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Product&gt; listOfProducts = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        searchResponse.hits().hits().forEach(hit -&gt; listOfProducts.add(hit.source()));</b>
+<b class="nc">&nbsp;        logger.info(&quot;Fuzzy Search Results: {}&quot;, listOfProducts.size());</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return listOfProducts;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(&quot;/customSearch&quot;)
+&nbsp;    public List&lt;Product&gt; customSearch(
+&nbsp;            @RequestParam(required = false) String nameQuery,
+&nbsp;            @RequestParam(required = false) String descriptionQuery,
+&nbsp;            @RequestParam(required = false) String prefix,
+&nbsp;            @RequestParam(required = false) String category
+&nbsp;    ) throws IOException {
+&nbsp;
+<b class="nc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticSearchService.customSearch(nameQuery, descriptionQuery, prefix, category);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return searchResponse.hits().hits().stream()</b>
+<b class="nc">&nbsp;                .map(hit -&gt; hit.source())</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-05 22:55</div>
+</div>
+</body>
+</html>

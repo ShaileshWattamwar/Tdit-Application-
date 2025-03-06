@@ -1,0 +1,223 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ElasticSearchService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ElasticSearch.SearchService.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ElasticSearchService (com.ElasticSearch.SearchService.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ElasticSearchService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    97.4%
+  </span>
+  <span class="absValue">
+    (38/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ElasticSearch.SearchService.service;
+&nbsp;
+&nbsp;import co.elastic.clients.elasticsearch.ElasticsearchClient;
+&nbsp;import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+&nbsp;import co.elastic.clients.elasticsearch.core.SearchRequest;
+&nbsp;import co.elastic.clients.elasticsearch.core.SearchResponse;
+&nbsp;import com.ElasticSearch.SearchService.entity.Product;
+&nbsp;import com.ElasticSearch.SearchService.util.ElasticSearchUtil;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.function.Supplier;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class ElasticSearchService {</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ElasticsearchClient elasticsearchClient;
+&nbsp;
+&nbsp;    public SearchResponse&lt;Map&gt; matchAllServices() throws IOException {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier  = ElasticSearchUtil.supplier();</b>
+<b class="fc">&nbsp;        logger.info(&quot;Executing matchAll query for all services...&quot;);</b>
+<b class="fc">&nbsp;        SearchResponse&lt;Map&gt; searchResponse = elasticsearchClient.search(s-&gt;s.query(supplier.get()),Map.class);</b>
+<b class="fc">&nbsp;        logger.info(&quot;MatchAll query executed. Total results found: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;
+<b class="fc">&nbsp;        return searchResponse;</b>
+&nbsp;    }
+&nbsp;    //matchAllProducts video content
+&nbsp;
+&nbsp;    public SearchResponse&lt;Product&gt; matchAllProductsServices() throws IOException {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier  = ElasticSearchUtil.supplier();</b>
+<b class="fc">&nbsp;        logger.info(&quot;Executing matchAll query for products...&quot;);</b>
+<b class="fc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticsearchClient.search(s-&gt;s.index(&quot;products&quot;).query(supplier.get()),Product.class);</b>
+<b class="fc">&nbsp;        logger.info(&quot;MatchAll query executed. Total products found: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;
+<b class="fc">&nbsp;        return searchResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //matchProductWithName
+&nbsp;
+&nbsp;    public SearchResponse&lt;Product&gt; matchProductsWithName(String fieldValue) throws IOException {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier  = ElasticSearchUtil.supplierWithNameField(fieldValue);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Executing matchProductWithName query for fieldValue: {}&quot;, fieldValue);</b>
+&nbsp;
+<b class="fc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticsearchClient.search(s-&gt;s.index(&quot;products&quot;).query(supplier.get()),Product.class);</b>
+<b class="fc">&nbsp;        logger.info(&quot;MatchProductWithName query executed. Total products found: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;
+<b class="fc">&nbsp;        return searchResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public SearchResponse&lt;Product&gt; autoSuggestProduct(String partialProductName) throws IOException {
+<b class="fc">&nbsp;        logger.info(&quot;Executing auto-suggest query for input: {}&quot;, partialProductName);</b>
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier = ElasticSearchUtil.createSupplierAutoSuggest(partialProductName);</b>
+<b class="fc">&nbsp;        System.out.println(&quot;Elasticsearch auto-suggest query: &quot; + supplier.get().toString());</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return elasticsearchClient.search(s -&gt; s.index(&quot;products&quot;).query(supplier.get()), Product.class);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public SearchResponse&lt;Product&gt; fuzzySearchProducts(String fieldValue) throws IOException {
+<b class="fc">&nbsp;        logger.info(&quot;Executing fuzzy search for: {}&quot;, fieldValue);</b>
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; fuzzySearchSupplier = ElasticSearchUtil.fuzzySearchSupplier(fieldValue);</b>
+<b class="fc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticsearchClient</b>
+<b class="fc">&nbsp;                .search(s -&gt; s.index(&quot;products&quot;).query(fuzzySearchSupplier.get()), Product.class);</b>
+<b class="fc">&nbsp;        logger.info(&quot;Fuzzy search executed. Total products found: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return searchResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public SearchResponse&lt;Product&gt; customSearch(String nameQuery, String descriptionQuery, String prefix, String category) throws IOException {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; querySupplier = ElasticSearchUtil.buildCustomSearchQuery(nameQuery, descriptionQuery, prefix, category);</b>
+&nbsp;
+<b class="fc">&nbsp;        logger.info(&quot;Executing custom search with parameters - Name: {}, Description: {}, Prefix: {}, Category: {}&quot;, nameQuery, descriptionQuery, prefix, category);</b>
+&nbsp;
+<b class="fc">&nbsp;        SearchRequest request = SearchRequest.of(s -&gt; s</b>
+<b class="fc">&nbsp;                .index(&quot;products&quot;)</b>
+<b class="fc">&nbsp;                .query(querySupplier.get())</b>
+<b class="fc">&nbsp;                .size(20) // Limit results to 10</b>
+<b class="fc">&nbsp;                .sort(ElasticSearchUtil.sortByRatingDesc())); // Sort by rating in descending order</b>
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        SearchResponse&lt;Product&gt; searchResponse = elasticsearchClient.search(request, Product.class);</b>
+&nbsp;//        logger.info(&quot;Custom search executed. Total results found: {}&quot;, searchResponse.hits().hits().size());
+<b class="pc">&nbsp;        if (searchResponse != null &amp;&amp; searchResponse.hits() != null) {</b>
+<b class="fc">&nbsp;            logger.info(&quot;Custom search executed. Total results found: {}&quot;, searchResponse.hits().hits().size());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            logger.warn(&quot;No results found for custom search.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return searchResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-05 22:55</div>
+</div>
+</body>
+</html>

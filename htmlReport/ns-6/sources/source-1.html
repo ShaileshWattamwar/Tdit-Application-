@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ElasticSearchUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ElasticSearch.SearchService.util</a>
+</div>
+
+<h1>Coverage Summary for Class: ElasticSearchUtil (com.ElasticSearch.SearchService.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ElasticSearchUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (8/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    79.5%
+  </span>
+  <span class="absValue">
+    (35/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ElasticSearch.SearchService.util;
+&nbsp;import co.elastic.clients.elasticsearch._types.SortOptions;
+&nbsp;import co.elastic.clients.elasticsearch._types.SortOrder;
+&nbsp;import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+&nbsp;
+&nbsp;import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+&nbsp;import co.elastic.clients.elasticsearch._types.query_dsl.QueryBuilders;
+&nbsp;
+&nbsp;
+&nbsp;import lombok.val;
+&nbsp;
+&nbsp;import co.elastic.clients.elasticsearch._types.query_dsl.*;
+&nbsp;import lombok.val;
+&nbsp;
+&nbsp;import java.util.function.Supplier;
+&nbsp;
+<b class="nc">&nbsp;public class ElasticSearchUtil</b>
+&nbsp;{
+&nbsp;    public static Supplier&lt;Query&gt; supplier() {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier = () -&gt; Query.of(q -&gt; q.matchAll(matchAllQuery()));</b>
+<b class="fc">&nbsp;        return supplier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static MatchAllQuery matchAllQuery() {
+<b class="nc">&nbsp;        MatchAllQuery.Builder matchAllQuery = new MatchAllQuery.Builder();</b>
+<b class="nc">&nbsp;        return matchAllQuery.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Supplier&lt;Query&gt; supplierWithNameField(String fieldValue) {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier = () -&gt; Query.of(q -&gt; q.match(matchQueryWithNameField(fieldValue)));</b>
+<b class="fc">&nbsp;        return supplier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static MatchQuery matchQueryWithNameField(String fieldValue) {
+<b class="nc">&nbsp;        MatchQuery.Builder matchQuery = new MatchQuery.Builder();</b>
+<b class="nc">&nbsp;        return matchQuery.field(&quot;name&quot;).query(fieldValue).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;public static Supplier&lt;Query&gt; createSupplierAutoSuggest(String partialProductName) {
+<b class="fc">&nbsp;    return () -&gt; Query.of(q -&gt; q.wildcard(w -&gt; w</b>
+<b class="fc">&nbsp;            .field(&quot;name&quot;)</b>
+<b class="fc">&nbsp;            .value(partialProductName + &quot;*&quot;)  // Wildcard for auto-suggestions</b>
+<b class="fc">&nbsp;            .caseInsensitive(true)));</b>
+&nbsp;}
+&nbsp;
+&nbsp;    public static MatchQuery createAutoSuggestMatchQuery(String partialProductName) {
+<b class="nc">&nbsp;        MatchQuery.Builder autoSuggestQuery = new MatchQuery.Builder();</b>
+<b class="nc">&nbsp;        return autoSuggestQuery.field(&quot;name&quot;).query(partialProductName).analyzer(&quot;edge_ngram_analyzer&quot;).build();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public static Supplier&lt;Query&gt; fuzzySearchSupplier(String fieldValue) {
+<b class="fc">&nbsp;        Supplier&lt;Query&gt; supplier = () -&gt; Query.of(q -&gt; q.fuzzy(fuzzyQuery(fieldValue)));</b>
+<b class="fc">&nbsp;        return supplier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static FuzzyQuery fuzzyQuery(String fieldValue) {
+<b class="nc">&nbsp;        FuzzyQuery.Builder fuzzyQuery = new FuzzyQuery.Builder();</b>
+&nbsp;        // You can specify the fuzziness, for example, &quot;AUTO&quot; or a numeric value
+<b class="nc">&nbsp;        return fuzzyQuery.field(&quot;name&quot;).value(fieldValue).fuzziness(&quot;AUTO&quot;).build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;  //  Bool Query
+&nbsp;
+&nbsp;    public static Supplier&lt;Query&gt; buildCustomSearchQuery(String nameQuery, String descriptionQuery, String prefix, String category) {
+<b class="fc">&nbsp;        return () -&gt; {</b>
+<b class="fc">&nbsp;            BoolQuery.Builder boolQuery = new BoolQuery.Builder();</b>
+&nbsp;
+&nbsp;            // Primary: Fuzzy search on &quot;name&quot; (mandatory match)
+<b class="pc">&nbsp;            if (nameQuery != null &amp;&amp; !nameQuery.isEmpty()) {</b>
+<b class="fc">&nbsp;                boolQuery.must(s -&gt; s.match(m -&gt; m</b>
+<b class="fc">&nbsp;                        .field(&quot;name&quot;)</b>
+<b class="fc">&nbsp;                        .query(nameQuery)</b>
+<b class="fc">&nbsp;                        .fuzziness(&quot;AUTO&quot;)));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Secondary: Fuzzy match on &quot;description&quot; (optional match)
+<b class="pc">&nbsp;            if (descriptionQuery != null &amp;&amp; !descriptionQuery.isEmpty()) {</b>
+<b class="fc">&nbsp;                boolQuery.should(s -&gt; s.match(m -&gt; m</b>
+<b class="fc">&nbsp;                        .field(&quot;description&quot;)</b>
+<b class="fc">&nbsp;                        .query(descriptionQuery)</b>
+<b class="fc">&nbsp;                        .fuzziness(&quot;AUTO&quot;)));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Prefix match for &quot;name&quot; (optional for auto-suggestions)
+<b class="pc">&nbsp;            if (prefix != null &amp;&amp; !prefix.isEmpty()) {</b>
+<b class="fc">&nbsp;                boolQuery.should(s -&gt; s.prefix(p -&gt; p</b>
+<b class="fc">&nbsp;                        .field(&quot;name&quot;)</b>
+<b class="fc">&nbsp;                        .value(prefix)));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Filter by &quot;category&quot; if provided
+<b class="pc">&nbsp;            if (category != null &amp;&amp; !category.isEmpty()) {</b>
+<b class="fc">&nbsp;                boolQuery.filter(f -&gt; f.term(t -&gt; t</b>
+<b class="fc">&nbsp;                        .field(&quot;category&quot;)</b>
+<b class="fc">&nbsp;                        .value(category)));</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            return Query.of(q -&gt; q.bool(boolQuery.build()));</b>
+&nbsp;        };
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public static SortOptions sortByRatingDesc() {
+<b class="fc">&nbsp;        return SortOptions.of(s -&gt; s</b>
+<b class="fc">&nbsp;                .field(f -&gt; f</b>
+<b class="fc">&nbsp;                        .field(&quot;rating&quot;)</b>
+<b class="fc">&nbsp;                        .order(SortOrder.Desc)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-05 22:55</div>
+</div>
+</body>
+</html>
