@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class UserDetailsServiceImplTest {
-
+    //pr
     @Mock
     private ConsumerRepository consumerRepository;
 

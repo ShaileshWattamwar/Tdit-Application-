@@ -23,7 +23,7 @@ import java.util.Optional;
 @Service
 //@Slf4j
 public class ConsumerService {
-
+    //pr
            @Autowired
            private ConsumerRepository repository;
            private static final PasswordEncoder passwordEncoder= new BCryptPasswordEncoder();

@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "b4f63be9c1a8a2d4e3f7c8559a97bbf2bbdb178db82306fbb20d4d97d6226ae1\n")
 public class AuthControllerTest {
 
-
+    //pr
     @Autowired
     private MockMvc mockMvc;
 
