@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class Consumer {
+    //pr
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

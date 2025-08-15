@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WebMvcTest(AdminController.class)
 @Import(SecurityConfiguration.class)
 public class AdminControllerTest {
+    //pr
     @Autowired
     private MockMvc mockMvc;
     @MockBean

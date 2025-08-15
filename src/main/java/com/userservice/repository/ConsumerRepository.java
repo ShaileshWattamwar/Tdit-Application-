@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ConsumerRepository extends JpaRepository<Consumer,Long> {
     Consumer findByUserName(String username);
 
-
+    //pr
     boolean existsByUserName(String userName);
 
 
